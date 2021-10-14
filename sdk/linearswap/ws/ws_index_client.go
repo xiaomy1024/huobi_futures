@@ -1,11 +1,11 @@
-﻿package ws
+package ws
 
 import (
 	"encoding/json"
 	"fmt"
-	"huobi_futures_Golang/sdk/linearswap"
-	"huobi_futures_Golang/sdk/linearswap/ws/response/index"
-	"huobi_futures_Golang/sdk/wsbase"
+	"github.com/xiaomy1024/huobi_futures/sdk/linearswap"
+	"github.com/xiaomy1024/huobi_futures/sdk/linearswap/ws/response/index"
+	"github.com/xiaomy1024/huobi_futures/sdk/wsbase"
 	"reflect"
 )
 

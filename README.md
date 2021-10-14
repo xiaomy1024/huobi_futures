@@ -218,8 +218,8 @@ wsmkClient := new(ws.WSMarketClient).Init("Host")
 ### Response
 
 All response data are defined as follow:
-- **huobi_futures_Golang.sdk.linearswap.restful.response**: all RESTful response data
-- **huobi_futures_Golang.sdk.linearswap.ws.response**: all websockt response data
+- **github.com/xiaomy1024/huobi_futures.sdk.linearswap.restful.response**: all RESTful response data
+- **github.com/xiaomy1024/huobi_futures.sdk.linearswap.ws.response**: all websockt response data
 
 ## Request Examples
 ### Market data

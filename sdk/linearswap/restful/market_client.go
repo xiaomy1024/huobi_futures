@@ -1,12 +1,12 @@
-﻿package restful
+package restful
 
 import (
 	"encoding/json"
 	"fmt"
-	"huobi_futures_Golang/sdk/linearswap"
-	"huobi_futures_Golang/sdk/linearswap/restful/response/market"
-	"huobi_futures_Golang/sdk/log"
-	"huobi_futures_Golang/sdk/reqbuilder"
+	"github.com/xiaomy1024/huobi_futures/sdk/linearswap"
+	"github.com/xiaomy1024/huobi_futures/sdk/linearswap/restful/response/market"
+	"github.com/xiaomy1024/huobi_futures/sdk/log"
+	"github.com/xiaomy1024/huobi_futures/sdk/reqbuilder"
 )
 
 type MarketClient struct {
