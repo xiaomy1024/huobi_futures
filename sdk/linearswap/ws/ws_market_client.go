@@ -13,11 +13,11 @@ type WSMarketClient struct {
 	WebSocketOp
 }
 
-func (wsMk *WSMarketClient) Init(accessKey string, secretKey string, host string) *WSMarketClient {
+func (wsMk *WSMarketClient) Init(host string) *WSMarketClient {
 	if host == "" {
 		host = linearswap.LINEAR_SWAP_DEFAULT_HOST
 	}
-	wsMk.open("/linear-swap-ws", host, accessKey, secretKey, true)
+	wsMk.open("/linear-swap-ws", host, "", "", true)
 	return wsMk
 }
 
