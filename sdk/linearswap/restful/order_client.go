@@ -41,23 +41,26 @@ func (oc *OrderClient) IsolatedPlaceOrderAsync(data chan responseorder.PlaceOrde
 	data <- result
 }
 
-func (oc *OrderClient) CrossPlaceOrderAsync(data chan responseorder.PlaceOrderResponse, request requestorder.PlaceOrderRequest) {
+func (oc *OrderClient) CrossPlaceOrderAsync(request requestorder.PlaceOrderRequest) (*responseorder.PlaceOrderResponse, error) {
 	url := oc.PUrlBuilder.Build(linearswap.POST_METHOD, "/linear-swap-api/v1/swap_cross_order", nil)
 
 	content, err := json.Marshal(request)
 	if err != nil {
 		log.Error("PlaceOrderRequest to json error: %v", err)
+		return nil, err
 	}
 	getResp, getErr := reqbuilder.HttpPost(url, string(content))
 	if getErr != nil {
 		log.Error("http get error: %s", getErr)
+		return nil, getErr
 	}
 	result := responseorder.PlaceOrderResponse{}
 	jsonErr := json.Unmarshal([]byte(getResp), &result)
 	if jsonErr != nil {
 		log.Error("convert json to PlaceOrderResponse error: %s", getErr)
+		return nil, getErr
 	}
-	data <- result
+	return &result, nil
 }
 
 func (oc *OrderClient) IsolatedPlaceBatchOrderAsync(data chan responseorder.PlaceBatchOrderResponse, requests requestorder.BatchPlaceOrderRequest) {
@@ -147,8 +150,8 @@ func (oc *OrderClient) IsolatedCancelOrderAsync(data chan responseorder.CancelOr
 	data <- result
 }
 
-func (oc *OrderClient) CrossCancelOrderAsync(data chan responseorder.CancelOrderResponse, contractCode string,
-	orderId string, clientOrderId string, offset string, direction string) {
+func (oc *OrderClient) CrossCancelOrderAsync(contractCode string,
+	orderId string, clientOrderId string, offset string, direction string) (*responseorder.CancelOrderResponse, error) {
 	// url
 	url := oc.PUrlBuilder.Build(linearswap.POST_METHOD, "/linear-swap-api/v1/swap_cross_cancel", nil)
 	if orderId == "" && clientOrderId == "" {
@@ -176,13 +179,15 @@ func (oc *OrderClient) CrossCancelOrderAsync(data chan responseorder.CancelOrder
 	getResp, getErr := reqbuilder.HttpPost(url, content)
 	if getErr != nil {
 		log.Error("http get error: %s", getErr)
+		return nil, getErr
 	}
 	result := responseorder.CancelOrderResponse{}
 	jsonErr := json.Unmarshal([]byte(getResp), &result)
 	if jsonErr != nil {
-		log.Error("convert json to CancelOrderResponse error: %s", getErr)
+		log.Error("convert json to CancelOrderResponse error: %s", jsonErr)
+		return nil, jsonErr
 	}
-	data <- result
+	return &result, nil
 }
 
 func (oc *OrderClient) IsolatedSwitchLeverRateAsync(data chan responseorder.SwitchLeverRateResponse, contractCode string, leverRate int) {
@@ -315,8 +320,8 @@ func (oc *OrderClient) IsolatedGetOrderDetailAsync(data chan responseorder.GetOr
 	data <- result
 }
 
-func (oc *OrderClient) CrossGetOrderDetailAsync(data chan responseorder.GetOrderDetailResponse, contractCode string, orderId int64, createdAt int64,
-	orderType int, pageIndex int, pageSize int) {
+func (oc *OrderClient) CrossGetOrderDetailAsync(contractCode string, orderId int64, createdAt int64,
+	orderType int, pageIndex int, pageSize int) (*responseorder.GetOrderDetailResponse, error) {
 	// url
 	url := oc.PUrlBuilder.Build(linearswap.POST_METHOD, "/linear-swap-api/v1/swap_cross_order_detail", nil)
 
@@ -341,13 +346,15 @@ func (oc *OrderClient) CrossGetOrderDetailAsync(data chan responseorder.GetOrder
 	getResp, getErr := reqbuilder.HttpPost(url, content)
 	if getErr != nil {
 		log.Error("http get error: %s", getErr)
+		return nil, getErr
 	}
 	result := responseorder.GetOrderDetailResponse{}
 	jsonErr := json.Unmarshal([]byte(getResp), &result)
 	if jsonErr != nil {
-		log.Error("convert json to GetOrderDetailResponse error: %s", getErr)
+		log.Error("convert json to GetOrderDetailResponse error: %s", jsonErr)
+		return nil, jsonErr
 	}
-	data <- result
+	return &result, nil
 }
 
 func (oc *OrderClient) IsolatedGetOpenOrderAsync(data chan responseorder.GetOpenOrderResponse, contractCode string,
@@ -385,8 +392,8 @@ func (oc *OrderClient) IsolatedGetOpenOrderAsync(data chan responseorder.GetOpen
 	data <- result
 }
 
-func (oc *OrderClient) CrossGetOpenOrderAsync(data chan responseorder.GetOpenOrderResponse, contractCode string,
-	pageIndex int, pageSize int, sortBy string, tradeType int) {
+func (oc *OrderClient) CrossGetOpenOrderAsync(contractCode string,
+	pageIndex int, pageSize int, sortBy string, tradeType int) (*responseorder.GetOpenOrderResponse, error) {
 	// url
 	url := oc.PUrlBuilder.Build(linearswap.POST_METHOD, "/linear-swap-api/v1/swap_cross_openorders", nil)
 
@@ -411,13 +418,15 @@ func (oc *OrderClient) CrossGetOpenOrderAsync(data chan responseorder.GetOpenOrd
 	getResp, getErr := reqbuilder.HttpPost(url, content)
 	if getErr != nil {
 		log.Error("http get error: %s", getErr)
+		return nil, getErr
 	}
 	result := responseorder.GetOpenOrderResponse{}
 	jsonErr := json.Unmarshal([]byte(getResp), &result)
 	if jsonErr != nil {
 		log.Error("convert json to GetOpenOrderResponse error: %s", getErr)
+		return nil, jsonErr
 	}
-	data <- result
+	return &result, nil
 }
 
 func (oc *OrderClient) IsolatedGetHisOrderAsync(data chan responseorder.GetHisOrderResponse, contractCode string, tradeType int, fcType int, status string,

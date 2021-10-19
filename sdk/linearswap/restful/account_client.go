@@ -77,7 +77,7 @@ func (ac *AccountClient) IsolatedGetAccountInfoAsync(data chan account.GetAccoun
 	data <- result
 }
 
-func (ac *AccountClient) CrossGetAccountInfoAsync(data chan account.GetAccountInfoResponse, marginAccount string, subUid int64) {
+func (ac *AccountClient) CrossGetAccountInfoAsync(marginAccount string, subUid int64) (*account.GetAccountInfoResponse, error) {
 	// ulr
 	url := ac.PUrlBuilder.Build(linearswap.POST_METHOD, "/linear-swap-api/v1/swap_cross_account_info", nil)
 	if subUid != 0 {
@@ -99,13 +99,15 @@ func (ac *AccountClient) CrossGetAccountInfoAsync(data chan account.GetAccountIn
 	getResp, getErr := reqbuilder.HttpPost(url, content)
 	if getErr != nil {
 		log.Error("http get error: %s", getErr)
+		return nil, getErr
 	}
 	result := account.GetAccountInfoResponse{}
 	jsonErr := json.Unmarshal([]byte(getResp), &result)
 	if jsonErr != nil {
 		log.Error("convert json to GetAccountInfoResponse error: %s", jsonErr)
+		return nil, jsonErr
 	}
-	data <- result
+	return &result, nil
 }
 
 func (ac *AccountClient) IsolatedGetAccountPositionAsync(data chan account.GetAccountPositionResponse, contractCode string, subUid int64) {
