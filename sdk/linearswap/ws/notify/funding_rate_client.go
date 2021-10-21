@@ -29,7 +29,7 @@ func (p *FundingRateClient) SetHandler(
 // Subscribe latest completed trade in tick by tick mode
 func (p *FundingRateClient) Subscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("public.%s.funding_rate", symbol)
-	sub := fmt.Sprintf("{\"sub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	sub := fmt.Sprintf("{\"op\": \"sub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(sub)
 
@@ -39,7 +39,7 @@ func (p *FundingRateClient) Subscribe(symbol string, clientId string) {
 // Unsubscribe trade
 func (p *FundingRateClient) UnSubscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("public.%s.funding_rate", symbol)
-	unsub := fmt.Sprintf("{\"unsub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	unsub := fmt.Sprintf("{\"op\": \"unsub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(unsub)
 

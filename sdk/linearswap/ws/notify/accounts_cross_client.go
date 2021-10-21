@@ -29,7 +29,7 @@ func (p *AccountsCrossClient) SetHandler(
 // Subscribe latest completed trade in tick by tick mode
 func (p *AccountsCrossClient) Subscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("accounts_cross.%s", symbol)
-	sub := fmt.Sprintf("{\"sub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	sub := fmt.Sprintf("{\"op\": \"sub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(sub)
 
@@ -39,8 +39,7 @@ func (p *AccountsCrossClient) Subscribe(symbol string, clientId string) {
 // Unsubscribe trade
 func (p *AccountsCrossClient) UnSubscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("accounts_cross.%s", symbol)
-	unsub := fmt.Sprintf("{\"unsub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
-
+	unsub := fmt.Sprintf("{\"op\": \"unsub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 	p.Send(unsub)
 
 	applogger.Info("WebSocket unsubscribed, topic=%s, clientId=%s", topic, clientId)

@@ -29,7 +29,7 @@ func (p *IsolatedPositionsClient) SetHandler(
 // Subscribe latest completed trade in tick by tick mode
 func (p *IsolatedPositionsClient) Subscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("positions.%s", symbol)
-	sub := fmt.Sprintf("{\"sub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	sub := fmt.Sprintf("{\"op\": \"sub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(sub)
 
@@ -39,7 +39,7 @@ func (p *IsolatedPositionsClient) Subscribe(symbol string, clientId string) {
 // Unsubscribe trade
 func (p *IsolatedPositionsClient) UnSubscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("positions.%s", symbol)
-	unsub := fmt.Sprintf("{\"unsub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	unsub := fmt.Sprintf("{\"op\": \"unsub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(unsub)
 

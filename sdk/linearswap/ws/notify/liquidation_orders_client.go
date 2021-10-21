@@ -29,7 +29,7 @@ func (p *LiquidationOrdersClient) SetHandler(
 // Subscribe latest completed trade in tick by tick mode
 func (p *LiquidationOrdersClient) Subscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("public.%s.liquidation_orders", symbol)
-	sub := fmt.Sprintf("{\"sub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	sub := fmt.Sprintf("{\"op\": \"sub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(sub)
 
@@ -39,7 +39,7 @@ func (p *LiquidationOrdersClient) Subscribe(symbol string, clientId string) {
 // Unsubscribe trade
 func (p *LiquidationOrdersClient) UnSubscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("public.%s.liquidation_orders", symbol)
-	unsub := fmt.Sprintf("{\"unsub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	unsub := fmt.Sprintf("{\"op\": \"unsub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(unsub)
 

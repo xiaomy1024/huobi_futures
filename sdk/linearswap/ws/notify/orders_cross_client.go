@@ -29,7 +29,7 @@ func (p *OrdersCrossClient) SetHandler(
 // Subscribe latest completed trade in tick by tick mode
 func (p *OrdersCrossClient) Subscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("orders_cross.%s", symbol)
-	sub := fmt.Sprintf("{\"sub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	sub := fmt.Sprintf("{\"op\": \"sub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(sub)
 
@@ -39,7 +39,7 @@ func (p *OrdersCrossClient) Subscribe(symbol string, clientId string) {
 // Unsubscribe trade
 func (p *OrdersCrossClient) UnSubscribe(symbol string, clientId string) {
 	topic := fmt.Sprintf("orders_cross.%s", symbol)
-	unsub := fmt.Sprintf("{\"unsub\": \"%s\",\"id\": \"%s\" }", topic, clientId)
+	unsub := fmt.Sprintf("{\"op\": \"unsub\",\"topic\": \"%s\",\"cid\": \"%s\" }", topic, clientId)
 
 	p.Send(unsub)
 
