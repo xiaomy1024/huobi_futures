@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/huobirdcenter/huobi_golang/logging/applogger"
+	"github.com/xiaomy1024/huobi_futures/sdk/reqbuilder"
 	"io/ioutil"
 	"strings"
 	"sync"
@@ -40,6 +41,8 @@ type WebSocketClientBase struct {
 	ticker            *time.Ticker
 	lastReceivedTime  time.Time
 	sendMutex         *sync.Mutex
+
+	requestBuilder *reqbuilder.WebSocketV2RequestBuilder
 }
 
 // Initializer
@@ -50,6 +53,15 @@ func (p *WebSocketClientBase) Init(host string, path string) *WebSocketClientBas
 	p.stopTickerChannel = make(chan int, 1)
 	p.sendMutex = &sync.Mutex{}
 
+	return p
+}
+
+func (p *WebSocketClientBase) InitV2(accessKey string, secretKey string, host string, path string) *WebSocketClientBase {
+	p.host = host
+	p.stopReadChannel = make(chan int, 1)
+	p.stopTickerChannel = make(chan int, 1)
+	p.requestBuilder = new(reqbuilder.WebSocketV2RequestBuilder).Init(accessKey, secretKey, host, path)
+	p.sendMutex = &sync.Mutex{}
 	return p
 }
 

@@ -58,7 +58,12 @@ time.Sleep(time.Duration(10) * time.Second)
 wsmkClient.UnsubKLine("BTC-USDT", "15min", "")
 time.Sleep(time.Duration(10) * time.Second)
 ```
+```
+// websocker new api,新版订阅消息
 
+
+
+```
 ## Usage
 
 ### Configuration
