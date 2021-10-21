@@ -1,7 +1,7 @@
 package model
 
 type WebSocketV2AuthenticationRequest struct {
-	op               string `json:"op"`
+	Op               string `json:"op"`
 	AuthType         string `json:"type"`
 	AccessKey        string `json:"AccessKeyId"`
 	SignatureMethod  string `json:"SignatureMethod"`
@@ -12,7 +12,7 @@ type WebSocketV2AuthenticationRequest struct {
 
 func (p *WebSocketV2AuthenticationRequest) Init() *WebSocketV2AuthenticationRequest {
 
-	p.op = "auth"
+	p.Op = "auth"
 	p.AuthType = "api"
 	p.SignatureMethod = "HmacSHA256"
 	p.SignatureVersion = "2"
