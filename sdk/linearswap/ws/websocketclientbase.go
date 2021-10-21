@@ -62,6 +62,7 @@ func (p *WebSocketClientBase) InitV2(accessKey string, secretKey string, host st
 	p.stopTickerChannel = make(chan int, 1)
 	p.requestBuilder = new(reqbuilder.WebSocketV2RequestBuilder).Init(accessKey, secretKey, host, path)
 	p.sendMutex = &sync.Mutex{}
+	p.path = path
 	return p
 }
 
