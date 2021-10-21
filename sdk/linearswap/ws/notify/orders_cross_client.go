@@ -10,20 +10,20 @@ import (
 
 // Responsible to handle Trade data from WebSocket
 type OrdersCrossClient struct {
-	ws.WebSocketClientBase
+	ws.WebSocketV2ClientBase
 }
 
 // Initializer
 func (p *OrdersCrossClient) Init(accessKey string, secretKey string, host string) *OrdersCrossClient {
-	p.WebSocketClientBase.InitV2(accessKey, secretKey, host, "/linear-swap-notification")
+	p.WebSocketV2ClientBase.Init(accessKey, secretKey, host, "/linear-swap-notification")
 	return p
 }
 
 // Set callback handler
 func (p *OrdersCrossClient) SetHandler(
-	connectedHandler ws.ConnectedHandler,
+	authenticationResponseHandler ws.AuthenticationV2ResponseHandler,
 	responseHandler ws.ResponseHandler) {
-	p.WebSocketClientBase.SetHandler(connectedHandler, p.handleMessage, responseHandler)
+	p.WebSocketV2ClientBase.SetHandler(authenticationResponseHandler, p.handleMessage, responseHandler)
 }
 
 // Subscribe latest completed trade in tick by tick mode
