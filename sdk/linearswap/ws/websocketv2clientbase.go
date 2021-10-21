@@ -223,10 +223,10 @@ func (p *WebSocketV2ClientBase) readLoop() {
 			// If it is Ping then respond Pong
 			pingV2Msg := ParsePingV2Message(message)
 			if pingV2Msg.IsPing() {
-				applogger.Debug("Received Ping: %d", pingV2Msg.Ts)
+				applogger.Debug("Received Ping: %s", pingV2Msg.Ts)
 				pongMsg := fmt.Sprintf("{\"op\": \"pong\",\"ts\": \"%s\"  }", pingV2Msg.Ts)
 				p.Send(pongMsg)
-				applogger.Debug("Respond  Pong: %d", pingV2Msg.Ts)
+				applogger.Debug("Respond  Pong: %s", pingV2Msg.Ts)
 			} else {
 				// Try to pass as websocket v2 authentication response
 				// If it is then invoke authentication handler
