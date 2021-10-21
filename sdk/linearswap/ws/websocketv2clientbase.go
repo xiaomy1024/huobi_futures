@@ -230,8 +230,9 @@ func (p *WebSocketV2ClientBase) readLoop() {
 			} else {
 				// Try to pass as websocket v2 authentication response
 				// If it is then invoke authentication handler
-				if pingV2Msg != nil {
-					switch pingV2Msg.Action {
+				baseMsg := ParseBaseV2Message(message)
+				if baseMsg != nil {
+					switch baseMsg.Action {
 					case "auth":
 						authResp := ParseWSV2AuthResp(message)
 						if authResp != nil && p.authenticationResponseHandler != nil {
@@ -258,11 +259,11 @@ func (p *WebSocketV2ClientBase) readLoop() {
 
 type PingV2Message struct {
 	Action string `json:"op"`
-	Ts     int64  `json:"ts"`
+	Ts     string `json:"ts"`
 }
 
 func (p *PingV2Message) IsPing() bool {
-	return p != nil && p.Action == "ping" && p.Ts != 0
+	return p != nil && p.Action == "ping" && p.Ts != ""
 }
 
 func ParsePingV2Message(message string) *PingV2Message {
@@ -271,15 +272,17 @@ func ParsePingV2Message(message string) *PingV2Message {
 	if err != nil {
 		return nil
 	}
-
 	return &result
 }
 
+type BaseV2Message struct {
+	Action string `json:"op"`
+	Ts     int64  `json:"ts"`
+}
+
 type AuthV2Message struct {
-	PingV2Message
-	Action    string `json:"op"`
+	BaseV2Message
 	AcType    string `json:"type"`
-	Ts        int64  `json:"ts"`
 	Cid       string `json:"cid"`
 	ErrorCode int    `json:err-code`
 	ErrorMsg  string `json:err-msg`
@@ -289,12 +292,20 @@ type AuthV2Message struct {
 	} `json:"data,omitempty"`
 }
 
+func ParseBaseV2Message(message string) *BaseV2Message {
+	result := BaseV2Message{}
+	err := json.Unmarshal([]byte(message), &result)
+	if err != nil {
+		return nil
+	}
+	return &result
+}
+
 func ParseWSV2AuthResp(message string) *AuthV2Message {
 	result := AuthV2Message{}
 	err := json.Unmarshal([]byte(message), &result)
 	if err != nil {
 		return nil
 	}
-
 	return &result
 }
