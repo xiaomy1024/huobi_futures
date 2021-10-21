@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/huobirdcenter/huobi_golang/logging/applogger"
-	"github.com/huobirdcenter/huobi_golang/pkg/model/auth"
-	"github.com/huobirdcenter/huobi_golang/pkg/model/base"
 	"github.com/xiaomy1024/huobi_futures/sdk/reqbuilder"
 	"sync"
 	"time"
 )
 
 // It will be invoked after websocket v2 authentication response received
-type AuthenticationV2ResponseHandler func(resp *auth.WebSocketV2AuthenticationResponse)
+type AuthenticationV2ResponseHandler func(resp *AuthV2Message)
 
 // The base class that responsible to get data from websocket authentication v2
 type WebSocketV2ClientBase struct {
@@ -225,23 +223,22 @@ func (p *WebSocketV2ClientBase) readLoop() {
 			// If it is Ping then respond Pong
 			pingV2Msg := ParsePingV2Message(message)
 			if pingV2Msg.IsPing() {
-				applogger.Debug("Received Ping: %d", pingV2Msg.Data.Timestamp)
-				pongMsg := fmt.Sprintf("{\"action\": \"pong\", \"data\": { \"ts\": %d } }", pingV2Msg.Data.Timestamp)
+				applogger.Debug("Received Ping: %d", pingV2Msg.Ts)
+				pongMsg := fmt.Sprintf("{\"op\": \"pong\",\"ts\": %d  }", pingV2Msg.Ts)
 				p.Send(pongMsg)
-				applogger.Debug("Respond  Pong: %d", pingV2Msg.Data.Timestamp)
+				applogger.Debug("Respond  Pong: %d", pingV2Msg.Ts)
 			} else {
 				// Try to pass as websocket v2 authentication response
 				// If it is then invoke authentication handler
-				wsV2Resp := base.ParseWSV2Resp(message)
-				if wsV2Resp != nil {
-					switch wsV2Resp.Action {
-					case "req":
-						authResp := auth.ParseWSV2AuthResp(message)
+				if pingV2Msg != nil {
+					switch pingV2Msg.Action {
+					case "auth":
+						authResp := ParseWSV2AuthResp(message)
 						if authResp != nil && p.authenticationResponseHandler != nil {
 							p.authenticationResponseHandler(authResp)
 						}
 
-					case "sub", "push":
+					case "sub", "push", "notify":
 						{
 							result, err := p.messageHandler(message)
 							if err != nil {
@@ -260,18 +257,40 @@ func (p *WebSocketV2ClientBase) readLoop() {
 }
 
 type PingV2Message struct {
-	Action string `json:"action"`
-	Data   *struct {
-		Timestamp int64 `json:"ts"`
-	}
+	Action string `json:"op"`
+	Ts     int64  `json:"ts"`
 }
 
 func (p *PingV2Message) IsPing() bool {
-	return p != nil && p.Action == "ping" && p.Data.Timestamp != 0
+	return p != nil && p.Action == "ping" && p.Ts != 0
 }
 
 func ParsePingV2Message(message string) *PingV2Message {
 	result := PingV2Message{}
+	err := json.Unmarshal([]byte(message), &result)
+	if err != nil {
+		return nil
+	}
+
+	return &result
+}
+
+type AuthV2Message struct {
+	PingV2Message
+	Action    string `json:"op"`
+	AcType    string `json:"type"`
+	Ts        int64  `json:"ts"`
+	Cid       string `json:"cid"`
+	ErrorCode int    `json:err-code`
+	ErrorMsg  string `json:err-msg`
+
+	Data struct {
+		UserId string `json:"user-id"`
+	} `json:"data,omitempty"`
+}
+
+func ParseWSV2AuthResp(message string) *AuthV2Message {
+	result := AuthV2Message{}
 	err := json.Unmarshal([]byte(message), &result)
 	if err != nil {
 		return nil
